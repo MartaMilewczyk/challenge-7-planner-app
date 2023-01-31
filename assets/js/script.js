@@ -1,9 +1,11 @@
 const currentDayEl = $('#currentDay');
 const calendarContainerEl = $('#calendar-container');
-let eventStorage = JSON.parse(localStorage.getItem('event')) || [];
+const clearEl = $("#clear");
 
 let startHour = 9;
 let endHour = 17;
+let storage = [];
+
 
 // time display
 function todayDateDisplay() {
@@ -12,7 +14,7 @@ function todayDateDisplay() {
 }
 setInterval(todayDateDisplay, 1);
 
-// render calendar rows
+// renders calendar rows
 function renderCalendarRows() {
 
     for (let i = startHour; i <= endHour; i++) {
@@ -23,28 +25,27 @@ function renderCalendarRows() {
         const eventTextEl = $('<textarea>').attr('id', 'event-text').attr('placeholder', 'Add new calendar event').addClass('col-md-10 description');
         const eventSaveEl = $('<button>').attr('id', 'event-save').addClass('col-md-1 saveBtn').text('Save');
 
-        // append created elements
-        calendarEventEl.append(eventHourEl, eventTextEl, eventSaveEl);
+        // appends created elements
+        calendarEventEl.append(
+            eventHourEl, 
+            eventTextEl, 
+            eventSaveEl);
+
         calendarContainerEl.append(calendarEventEl);
         
         let currentHour = dayjs().format('H');
 
-        //   check hour and apply appropriate class
+        // checks hour and apply appropriate class
         currentHour == i ? eventTextEl.addClass("present")
         : currentHour > i ? eventTextEl.addClass("past")
         : eventTextEl.addClass("future");
 
-        eventSaveEl.on('click', saveEvent);
+        // runs save button
+        $('#event-save').on('click', function() {
+            console.log('saved');
+        });
     }
-    
-    function saveEvent(event) {
-        event.preventDefault();
-        console.log('saved');
-    }
-    
 }
 
 renderCalendarRows();
-
-
 
