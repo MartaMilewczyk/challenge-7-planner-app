@@ -1,9 +1,6 @@
 const currentDayEl = $('#currentDay');
-const calendarEventEl = $('#calendar-event');
 const calendarContainerEl = $('#calendar-container');
-const eventHourEl = $('#event-hour');
-const eventTextEl = $('#event-text');
-const eventSaveEl = $('#event-save');
+let eventStorage = JSON.parse(localStorage.getItem('event')) || [];
 
 let startHour = 9;
 let endHour = 17;
@@ -13,26 +10,41 @@ function todayDateDisplay() {
     let todayDate = dayjs(). format('dddd[,] DD MMM YYYY [at] HH:mm:ss');
     currentDayEl.text(todayDate);
 }
-
 setInterval(todayDateDisplay, 1);
 
+// render calendar rows
 function renderCalendarRows() {
-    calendarEventEl.hide(':first-child');
-    const calEventEl = $('.calendar-event');
-    let currentHour = dayjs().format('h');
 
     for (let i = startHour; i <= endHour; i++) {
-        let newEl = calEventEl.clone().appendTo(calendarContainerEl);
-        evHourEl = newEl.children('.event-hour');
-        evHourEl.text(i + ":00")
 
-        currentHour < i ? eventTextEl.addClass("future")
-        : currentHour === i ? eventTextEl.addClass("present")
-        : eventTextEl.addClass("past");
+        // dynamic creation of elements
+        const calendarEventEl = $('<div>').attr('id', 'calendar-event').addClass('row');
+        const eventHourEl = $('<div>').attr('id', 'event-hour').addClass('col-md-1 hour').text(i + ':00');
+        const eventTextEl = $('<textarea>').attr('id', 'event-text').attr('placeholder', 'Add new calendar event').addClass('col-md-10 description');
+        const eventSaveEl = $('<button>').attr('id', 'event-save').addClass('col-md-1 saveBtn').text('Save');
+
+        // append created elements
+        calendarEventEl.append(eventHourEl, eventTextEl, eventSaveEl);
+        calendarContainerEl.append(calendarEventEl);
+        
+        let currentHour = dayjs().format('H');
+
+        //   check hour and apply appropriate class
+        currentHour == i ? eventTextEl.addClass("present")
+        : currentHour > i ? eventTextEl.addClass("past")
+        : eventTextEl.addClass("future");
+
+        eventSaveEl.on('click', saveEvent);
     }
-
-    console.log(evHourEl);
+    
+    function saveEvent(event) {
+        event.preventDefault();
+        console.log('saved');
+    }
+    
 }
 
 renderCalendarRows();
+
+
 
